@@ -23,6 +23,19 @@ app.use(express.static(publicPath));
 io.on("connection", (socket) => {
     console.log("New user connected");
 
+    socket.emit("welcomeMessage", {
+        from: "admin",
+        text: "Welcome to the chat app",
+        createdAt: new Date().getTime()
+    });
+
+    socket.broadcast.emit("newUser", {
+        from: "admin",
+        text: "New user joined!",
+        createdAt: new Date().getTime()
+    })
+
+
     //This is the server listening for data on createMessage socket from client
     socket.on("createMessage", (message) => {
         console.log("Created New Message:", message);
@@ -54,3 +67,9 @@ server.listen(port, () => {
     // })
 
 
+    //broadcast will emit an event to everyone except for the person that created the event
+    // socket.broadcast.emit("newMessage", {
+    //     from: message.from,
+    //     text: message.text,
+    //     createdAt: new Date().getTime()
+    // })
