@@ -23,6 +23,18 @@ app.use(express.static(publicPath));
 io.on("connection", (socket) => {
     console.log("New user connected");
 
+    //second arg is the data object that you want to send
+    socket.emit("newMessage", {
+        from: "kelly77zhenggg",
+        text: "Big party coming up in Ibiza!",
+        createdAt: 098765
+    })
+
+    //This is the server listening for data on createMessage socket from client
+    socket.on("createMessage", (newMessage) => {
+        console.log("Created Email:", newMessage);
+    })
+
     socket.on("disconnect", () => {
         console.log("Client disconnected");
     })
