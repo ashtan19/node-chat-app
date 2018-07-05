@@ -3,10 +3,6 @@ var socket = io();
 socket.on("connect", function () {
     console.log("Connected to server");
 
-    socket.emit("createMessage", {
-        to: "queez00",
-        text: "I am down to go to Ibiza!"
-    })
 });
 
 //When listening to a socket, the data is passed into the callback
@@ -20,3 +16,10 @@ socket.on("disconnect", function () {
 });
 
 
+
+
+
+// socket.emit("createMessage", {
+//     to: "queez00",
+//     text: "I am down to go to Ibiza!"
+// })
