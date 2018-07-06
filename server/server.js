@@ -12,7 +12,7 @@ const http = require("http");
 
 const publicPath = path.join(__dirname, "../public"); //Helps to link the path more cleanly
 const port = process.env.PORT || 3000;
-const {generateMessage} = require("./utils/message");
+const {generateMessage, generateLocationMessage} = require("./utils/message");
 
 var app = express();
 var server = http.createServer(app);    //Using the http server instead of express server for socket.io
@@ -34,6 +34,10 @@ io.on("connection", (socket) => {
         //io.emit emits a event to every connection 
         io.emit("newMessage", generateMessage(message.from, message.text));
         callback("This is from the server");
+    });
+
+    socket.on("createLocationMessage", (coords) => {
+        io.emit("newLocationMessage", generateLocationMessage("admin", coords.latitude, coords.longitude));
     })
 
     socket.on("disconnect", () => {

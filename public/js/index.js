@@ -34,18 +34,47 @@ $("#message-form").on("submit", function (e) {
     })
 });
 
+// Geolocation function
+var locationButton = jQuery("#send-location");          // Getting the tag 
+locationButton.on("click", function() {
+    if(!navigator.geolocation) {
+        return alert("Geolocation not supported by your browser.");
+    }
+    navigator.geolocation.getCurrentPosition(function(position) {
+        socket.emit("createLocationMessage", {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        })
+        console.log(position);
+    }, function() {
+        alert("Unable to getch location");
+    })
+});
+
+socket.on("newLocationMessage", function(message) {
+    var li = jQuery("<li></li>");               //Creating a new li for the new message
+    var a = jQuery("<a target='_blank'>My Current Location</a>");
+
+    li.text(`${message.from}: `);
+    a.attr("href", message.url);                //attr = attributes in jQuery
+    li.append(a);                               //append the anchor to the list item
+
+    jQuery("#messages").append(li);
+})
+
+
+
+
+
+
 // $("#message-form").on("click", function() {
 //     $("#message-form").hide(2000);
 // })
-
-
-
 
 // socket.emit("createMessage", {
 //     to: "queez00",
 //     text: "I am down to go to Ibiza!"
 // })
-
 
 // socket.emit("createMessage", {
 //     from: "xiaxia",
