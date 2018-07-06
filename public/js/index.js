@@ -34,9 +34,9 @@ $("#message-form").on("submit", function (e) {
     })
 });
 
-$("#message-form").on("click", function() {
-    $("#message-form").hide(2000);
-})
+// $("#message-form").on("click", function() {
+//     $("#message-form").hide(2000);
+// })
 
 
 
