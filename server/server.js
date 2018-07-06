@@ -24,14 +24,16 @@ app.use(express.static(publicPath));
 io.on("connection", (socket) => {
     console.log("New user connected");
 
-    socket.emit("welcomeMessage", generateMessage("admin", "Welcome to the chat app"));
-    socket.broadcast.emit("newUser", generateMessage("admin", "New user joined!"));
+    socket.emit("newMessage", generateMessage("admin", "Welcome to the chat app"));
+    socket.broadcast.emit("newMessage", generateMessage("admin", "New user joined!"));
 
     //This is the server listening for data on createMessage socket from client
-    socket.on("createMessage", (message) => {
+    //Call the callback to send back the acknowledgement
+    socket.on("createMessage", (message, callback) => {
         console.log("Created New Message:", message);
         //io.emit emits a event to every connection 
-        io.emit("newMessage", generateMessage(message.from, message.text))
+        io.emit("newMessage", generateMessage(message.from, message.text));
+        callback("This is from the server");
     })
 
     socket.on("disconnect", () => {
