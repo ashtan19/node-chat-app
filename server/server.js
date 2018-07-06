@@ -12,6 +12,7 @@ const http = require("http");
 
 const publicPath = path.join(__dirname, "../public"); //Helps to link the path more cleanly
 const port = process.env.PORT || 3000;
+const {generateMessage} = require("./utils/message");
 
 var app = express();
 var server = http.createServer(app);    //Using the http server instead of express server for socket.io
@@ -23,28 +24,14 @@ app.use(express.static(publicPath));
 io.on("connection", (socket) => {
     console.log("New user connected");
 
-    socket.emit("welcomeMessage", {
-        from: "admin",
-        text: "Welcome to the chat app",
-        createdAt: new Date().getTime()
-    });
-
-    socket.broadcast.emit("newUser", {
-        from: "admin",
-        text: "New user joined!",
-        createdAt: new Date().getTime()
-    })
-
+    socket.emit("welcomeMessage", generateMessage("admin", "Welcome to the chat app"));
+    socket.broadcast.emit("newUser", generateMessage("admin", "New user joined!"));
 
     //This is the server listening for data on createMessage socket from client
     socket.on("createMessage", (message) => {
         console.log("Created New Message:", message);
         //io.emit emits a event to every connection 
-        io.emit("newMessage", {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        })
+        io.emit("newMessage", generateMessage(message.from, message.text))
     })
 
     socket.on("disconnect", () => {
