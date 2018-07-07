@@ -7,9 +7,10 @@ socket.on("connect", function () {
 
 //When listening to a socket, the data is passed into the callback
 socket.on("newMessage", function (message) {
+    var formattedTime = moment(message.createdAt).format("h:mm a");
     console.log("New Message:", message);
     var li = jQuery("<li></li>");               //Creating a new li for the new message
-    li.text(`${message.from}: ${message.text}`);
+    li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
     jQuery("#messages").append(li);
 });
@@ -60,10 +61,11 @@ locationButton.on("click", function() {
 });
 
 socket.on("newLocationMessage", function(message) {
+    var formattedTime = moment(message.createdAt).format("h:mm a");
     var li = jQuery("<li></li>");               //Creating a new li for the new message
     var a = jQuery("<a target='_blank'>My Current Location</a>");
 
-    li.text(`${message.from}: `);
+    li.text(`${message.from} ${formattedTime}: `);
     a.attr("href", message.url);                //attr = attributes in jQuery
     li.append(a);                               //append the anchor to the list item
 
