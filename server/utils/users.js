@@ -33,6 +33,12 @@ class Users {
         return namesArray;
     }
 
+    getUniqueRooms() {
+        var uniqueRoomsArray = this.users.map((user) => user.room);
+        var uniqueRoomsArray = _.uniq(uniqueRoomsArray);
+        return uniqueRoomsArray;
+    }
+
 }  
 
 module.exports = {

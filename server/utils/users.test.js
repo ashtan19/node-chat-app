@@ -79,6 +79,17 @@ describe("Users", () => {
     it("Should not find a user", () => {
         var user = users.getUser("4");
         expect(user).toNotExist();        
+    });
+
+    it("Should filter unique rooms", () => {
+        var uniqueRooms = users.getUniqueRooms();
+        expect(uniqueRooms).toEqual(["Tea", "Coffee"]);
+    })
+
+    it("Should not be any rooms", () => {
+        users.users = [];
+        var uniqueRooms = users.getUniqueRooms();
+        expect(uniqueRooms).toEqual([]);
     })
 
 })

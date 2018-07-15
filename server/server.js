@@ -39,9 +39,17 @@ io.on("connection", (socket) => {
 
         socket.emit("newMessage", generateMessage("admin", "Welcome to the chat app"));
         socket.broadcast.to(params.room).emit("newMessage", generateMessage("Admin", `${params.name} has joined!`));
+        //Update new list of rooms in index.html
+        io.emit("updateRooms", users.getUniqueRooms());
+        console.log(users.getUniqueRooms()); 
 
         callback();
     })
+
+    socket.on("landOnSignIn", () => {
+        io.emit("updateRooms", users.getUniqueRooms());
+        console.log(users.getUniqueRooms()); 
+    });
 
 
     //This is the server listening for data on createMessage socket from client
