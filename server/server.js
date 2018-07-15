@@ -25,8 +25,6 @@ app.use(express.static(publicPath));
 
 // Register an event listener
 io.on("connection", (socket) => {
-    console.log("New user connected");
-
     socket.on("join", (params, callback) => {
 
         if (!isRealString(params.name) || !isRealString(params.room)) {
@@ -36,10 +34,11 @@ io.on("connection", (socket) => {
 
         users.removeUser(socket.id);            //Updating user array
         users.addUser(socket.id, params.name, params.room);
+        console.log(`${params.name} have connected to Room: ${params.room}`);
         io.to(params.room).emit("updateUserList", users.getUserList(params.room));
 
         socket.emit("newMessage", generateMessage("admin", "Welcome to the chat app"));
-        socket.broadcast.to(params.room).emit("newMessage", generateMessage("admin", `${params.name} has joined!`));
+        socket.broadcast.to(params.room).emit("newMessage", generateMessage("Admin", `${params.name} has joined!`));
 
         callback();
     })
@@ -48,14 +47,22 @@ io.on("connection", (socket) => {
     //This is the server listening for data on createMessage socket from client
     //Call the callback to send back the acknowledgement
     socket.on("createMessage", (message, callback) => {
-        console.log("Created New Message:", message);
-        //io.emit emits a event to every connection 
-        io.emit("newMessage", generateMessage(message.from, message.text));
+        var user = users.getUser(socket.id);
+
+        if(user && isRealString(message.text)) {
+            //io.emit emits a event to every connection in the room
+            io.to(user.room).emit("newMessage", generateMessage(user.name, message.text));            
+        }
+        console.log(`${user.name}`, "created New Message:", message);
         callback();
     });
 
     socket.on("createLocationMessage", (coords) => {
-        io.emit("newLocationMessage", generateLocationMessage("admin", coords.latitude, coords.longitude));
+        var user = users.getUser(socket.id);
+        if (user) {
+            io.to(user.room).emit("newLocationMessage", generateLocationMessage(user.name, coords.latitude, coords.longitude));
+        }
+        
     })
 
     socket.on("disconnect", () => {
